@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { useChatProvider } from "@/providers/chat-provider"
 import { Slot } from "@radix-ui/react-slot"
 import type { Message } from "ai"
@@ -92,8 +92,8 @@ ChatLoadingIndicator.displayName = "ChatLoadingIndicator"
  * ChatInput
  */
 const ChatInput = React.forwardRef<
-  HTMLInputElement,
-  React.ComponentPropsWithoutRef<typeof Input> & {
+  HTMLTextAreaElement,
+  React.ComponentPropsWithoutRef<typeof Textarea> & {
     asChild?: boolean
   }
 >(({ placeholder, className, asChild, ...props }, ref) => {
@@ -102,26 +102,36 @@ const ChatInput = React.forwardRef<
     volume: 0.5,
   })
 
-  const Comp = asChild ? Slot : Input
+  const Comp = asChild ? Slot : Textarea
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && status === "ready") {
-      handleSend()
-      play()
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Send message if Enter is pressed without the Shift key
+    if (e.key === "Enter" && !e.shiftKey && status === "ready") {
+      e.preventDefault() // Prevent adding a newline
+      if (input.trim()) {
+        // Only send if not just whitespace
+        handleSend()
+        play()
+      }
     }
+    // If Shift+Enter is pressed, the default behavior (newline) is allowed.
   }
 
   return (
     <>
       {AudioComponent}
-      <Comp
+      <Textarea
         ref={ref}
         value={input}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         placeholder={placeholder || "Type here..."}
         disabled={status === "streaming" || status === "error"}
-        className={cn("", className)}
+        className={cn(
+          "ring-none max-h-[180px] min-h-[40px] flex-1 text-xs focus-visible:ring-transparent",
+          className,
+        )}
+        rows={1} // Start with one row, it will auto-expand
         {...props}
       />
     </>
