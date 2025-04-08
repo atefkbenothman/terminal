@@ -70,14 +70,14 @@ export default function Home() {
         <ResizablePanel defaultSize={80}>
           <div className="flex h-full flex-col">
             {/* Content Header */}
-            <div className="flex h-12 flex-shrink-0 items-center border-b pr-2 pl-4">
+            <div className="bg-card flex h-12 flex-shrink-0 items-center border-b pr-2 pl-4">
               <p className="text-md flex-1 font-medium">Content</p>
               <div className="flex flex-row items-center gap-2">
                 <DarkModeToggle />
                 <Button
                   onClick={() => handleSidebarClick(!sidebarCollapsed)}
                   size="icon"
-                  variant="ghost"
+                  variant="outline"
                 >
                   {sidebarCollapsed ? (
                     <ChevronLeft className="h-4.5 w-4.5" />
@@ -122,14 +122,15 @@ export default function Home() {
             ) : (
               <div className="flex flex-1 flex-col overflow-hidden">
                 <div className="min-h-0 flex-1 overflow-y-auto">
-                  <ChatMessageList className="">
+                  <ChatMessageList className="gap-2">
                     {messages.map((msg) =>
                       msg.role === "user" ? (
                         <UserMessage
                           label={false}
                           key={msg.id}
                           message={msg}
-                          className="bg-secondary text-secondary-foreground px-2 py-1 text-sm wrap-break-word"
+                          align="left"
+                          className="bg-secondary text-secondary-foreground px-2 py-1 text-xs wrap-break-word"
                         >
                           {msg.content}
                         </UserMessage>
@@ -138,7 +139,7 @@ export default function Home() {
                           key={msg.id}
                           message={msg}
                           label={false}
-                          className="bg-popover text-popover-foreground px-2 py-1 text-sm wrap-break-word"
+                          className="bg-accent text-accent-foreground px-2 py-1 text-xs wrap-break-word"
                         >
                           {msg.content}
                         </AssistantMessage>
@@ -156,6 +157,7 @@ export default function Home() {
                       !input.trim()
                     }
                     variant="secondary"
+                    className="h-full"
                   >
                     <ArrowUp className="h-4 w-4" />
                   </ChatSendButton>
